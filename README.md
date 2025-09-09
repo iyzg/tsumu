@@ -20,6 +20,7 @@ available commands:
 - `image` - create image occlusion cards
 - `fact` - convert structured facts to q&a cards
 - `mnemonic` - generate mnemonic cards using memory techniques
+- `poetry` - generate cards for memorizing poetry and verse
 
 ## usage examples
 
@@ -84,6 +85,13 @@ python scripts/anki.py vocabulary words.txt --all-types -o vocab.csv
 python scripts/anki.py vocabulary words.txt --etymology --synonyms
 ```
 
+### poetry memorization
+create progressive cards for memorizing poems and verse:
+```bash
+echo -e "roses are red\nviolets are blue" | python scripts/anki.py poetry
+python scripts/anki.py poetry poem.txt --progressive --preserve-rhymes -o poem_cards.csv
+```
+
 ### deck building
 combine and organize cards from multiple sources:
 ```bash
@@ -112,6 +120,7 @@ each generator can be used standalone or through the unified cli:
 - **fact_to_cards.py**: multi-perspective fact cards
 - **mnemonic_generator.py**: memory palace and association techniques
 - **vocabulary_cards.py**: comprehensive vocabulary learning with etymology and context
+- **poetry_memorization.py**: progressive cloze deletion for memorizing poetry and verse
 - **batch_processor.py**: bulk processing of multiple files
 - **preview_cards.py**: preview and browse cards before import
 - **smart_parser.py**: auto-detect content types and generate appropriate cards
