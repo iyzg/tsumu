@@ -16,6 +16,7 @@ Commands:
     fact        Convert facts to Q&A cards
     mnemonic    Generate mnemonic cards using memory techniques
     vocabulary  Generate comprehensive vocabulary flashcards
+    poetry      Generate cards for memorizing poetry and verse
     
 Examples:
     python anki.py markdown notes.md -o cards.csv
@@ -61,6 +62,10 @@ COMMANDS = {
     'vocabulary': {
         'script': 'vocabulary_cards.py',
         'help': 'Generate comprehensive vocabulary flashcards'
+    },
+    'poetry': {
+        'script': 'poetry_memorization.py',
+        'help': 'Generate cards for memorizing poetry and verse'
     }
 }
 
