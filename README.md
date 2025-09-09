@@ -28,6 +28,7 @@ available commands:
 - `context` - generate cards with varying context windows for deeper learning
 - `formula` - break down complex formulas into component-based cards
 - `timeline` - generate chronological learning cards for dates and events
+- `incremental` - break long texts into incremental reading chunks
 
 ## usage examples
 
@@ -134,6 +135,13 @@ echo -e "1492 | Columbus discovers America\n1776 | American Declaration" | pytho
 python scripts/timeline_cards.py history.txt --relative --sequence --gaps -o timeline_cards.csv
 ```
 
+### incremental reading
+break long texts into manageable chunks for progressive learning:
+```bash
+python scripts/incremental_reading.py article.txt -o cards.csv
+python scripts/incremental_reading.py book.txt --chunk-size 200 --overlap 50
+python scripts/incremental_reading.py complex.txt --difficulty-progression --chunk-type sentences
+
 ### deck building
 combine and organize cards from multiple sources:
 ```bash
@@ -170,6 +178,7 @@ each generator can be used standalone or through the unified cli:
 - **context_window.py**: generate cards with varying context for deep comprehension
 - **formula_breakdown.py**: break down formulas into component-based learning cards
 - **timeline_cards.py**: chronological learning cards for dates, events, and sequences
+- **incremental_reading.py**: break long texts into incremental learning chunks with context
 - **batch_processor.py**: bulk processing of multiple files
 - **preview_cards.py**: preview and browse cards before import
 - **smart_parser.py**: auto-detect content types and generate appropriate cards
@@ -189,6 +198,7 @@ python scripts/test_formula_breakdown.py   # formula breakdown tests
 python scripts/test_synonym_web.py         # synonym web tests
 python scripts/test_list_memorization.py   # list memorization tests
 python scripts/test_timeline_cards.py      # timeline cards tests
+python scripts/test_incremental_reading.py # incremental reading tests
 ```
 
 ## tips for quality cards
