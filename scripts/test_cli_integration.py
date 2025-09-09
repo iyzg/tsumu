@@ -89,7 +89,7 @@ my_list = [1, 2, 3]
         """Test cloze deletion generation."""
         text = "The quick brown fox jumps over the lazy dog."
         
-        result = self.run_cli('cloze -- --mode basic', text)
+        result = self.run_cli('cloze -- --mode basic -k quick brown fox', text)
         
         self.assertEqual(result.returncode, 0)
         self.assertIn('{{c1::', result.stdout)
