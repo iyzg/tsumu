@@ -15,6 +15,7 @@ Commands:
     image       Create image occlusion cards
     fact        Convert facts to Q&A cards
     mnemonic    Generate mnemonic cards using memory techniques
+    vocabulary  Generate comprehensive vocabulary flashcards
     
 Examples:
     python anki.py markdown notes.md -o cards.csv
@@ -56,6 +57,10 @@ COMMANDS = {
     'mnemonic': {
         'script': 'mnemonic_generator.py',
         'help': 'Generate mnemonic cards using memory techniques'
+    },
+    'vocabulary': {
+        'script': 'vocabulary_cards.py',
+        'help': 'Generate comprehensive vocabulary flashcards'
     }
 }
 

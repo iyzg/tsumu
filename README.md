@@ -77,6 +77,13 @@ python scripts/smart_parser.py notes.txt --analyze  # preview what will be gener
 python scripts/smart_parser.py notes.txt -o smart_cards.csv
 ```
 
+### vocabulary learning
+comprehensive vocabulary cards with multiple learning angles:
+```bash
+python scripts/anki.py vocabulary words.txt --all-types -o vocab.csv
+python scripts/anki.py vocabulary words.txt --etymology --synonyms
+```
+
 ### deck building
 combine and organize cards from multiple sources:
 ```bash
@@ -104,6 +111,7 @@ each generator can be used standalone or through the unified cli:
 - **image_occlusion.py**: visual learning with svg overlays
 - **fact_to_cards.py**: multi-perspective fact cards
 - **mnemonic_generator.py**: memory palace and association techniques
+- **vocabulary_cards.py**: comprehensive vocabulary learning with etymology and context
 - **batch_processor.py**: bulk processing of multiple files
 - **preview_cards.py**: preview and browse cards before import
 - **smart_parser.py**: auto-detect content types and generate appropriate cards
