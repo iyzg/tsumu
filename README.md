@@ -27,6 +27,7 @@ available commands:
 - `synonym` - generate interconnected vocabulary cards with synonyms/antonyms
 - `context` - generate cards with varying context windows for deeper learning
 - `formula` - break down complex formulas into component-based cards
+- `timeline` - generate chronological learning cards for dates and events
 
 ## usage examples
 
@@ -126,6 +127,13 @@ echo "E = mc^2 | E:energy, m:mass, c:speed of light" | python scripts/formula_br
 python scripts/formula_breakdown.py physics_formulas.txt --include-units --reverse -o formula_cards.csv
 ```
 
+### timeline cards
+learn chronological information with various card types:
+```bash
+echo -e "1492 | Columbus discovers America\n1776 | American Declaration" | python scripts/timeline_cards.py
+python scripts/timeline_cards.py history.txt --relative --sequence --gaps -o timeline_cards.csv
+```
+
 ### deck building
 combine and organize cards from multiple sources:
 ```bash
@@ -161,6 +169,7 @@ each generator can be used standalone or through the unified cli:
 - **synonym_web.py**: interconnected vocabulary cards with word relationships
 - **context_window.py**: generate cards with varying context for deep comprehension
 - **formula_breakdown.py**: break down formulas into component-based learning cards
+- **timeline_cards.py**: chronological learning cards for dates, events, and sequences
 - **batch_processor.py**: bulk processing of multiple files
 - **preview_cards.py**: preview and browse cards before import
 - **smart_parser.py**: auto-detect content types and generate appropriate cards
@@ -179,6 +188,7 @@ python scripts/test_context_window.py      # context window tests
 python scripts/test_formula_breakdown.py   # formula breakdown tests
 python scripts/test_synonym_web.py         # synonym web tests
 python scripts/test_list_memorization.py   # list memorization tests
+python scripts/test_timeline_cards.py      # timeline cards tests
 ```
 
 ## tips for quality cards
