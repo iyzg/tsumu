@@ -386,22 +386,47 @@ def load_cards(file_path: Path) -> List[Dict[str, str]]:
         else:
             delimiter = ','
         
-        reader = csv.DictReader(f, delimiter=delimiter)
+        # Check if file has headers
+        first_line = f.readline()
+        f.seek(0)
         
-        for row in reader:
-            # Handle different possible column names
-            front = row.get('Front') or row.get('front') or row.get('Question') or ''
-            back = row.get('Back') or row.get('back') or row.get('Answer') or ''
+        # If the first line doesn't look like headers, assume no headers
+        if delimiter in first_line and not any(
+            header in first_line.lower() 
+            for header in ['front', 'back', 'question', 'answer', 'text']
+        ):
+            # No headers, read as simple rows
+            reader = csv.reader(f, delimiter=delimiter)
+            for row in reader:
+                if len(row) >= 2:
+                    cards.append({
+                        'front': row[0],
+                        'back': row[1]
+                    })
+                elif len(row) == 1:
+                    # Single column, might be cloze
+                    cards.append({
+                        'front': row[0],
+                        'back': row[0]
+                    })
+        else:
+            # Has headers, use DictReader
+            reader = csv.DictReader(f, delimiter=delimiter)
             
-            # Handle cloze cards
-            if 'Text' in row:
-                front = row['Text']
-                back = row['Text']
-            
-            cards.append({
-                'front': front,
-                'back': back
-            })
+            for row in reader:
+                # Handle different possible column names
+                front = row.get('Front') or row.get('front') or row.get('Question') or ''
+                back = row.get('Back') or row.get('back') or row.get('Answer') or ''
+                
+                # Handle cloze cards
+                if 'Text' in row:
+                    front = row['Text']
+                    back = row['Text']
+                
+                cards.append({
+                    'front': front,
+                    'back': back
+                })
     
     return cards
 
