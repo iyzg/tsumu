@@ -55,6 +55,21 @@ convert detailed facts into multiple card types:
 cat facts.txt | python scripts/anki.py fact -- -t basic list example -o fact_cards.csv
 ```
 
+### batch processing
+process multiple files or entire directories at once:
+```bash
+python scripts/batch_processor.py notes/*.md -t markdown -o output/
+python scripts/batch_processor.py code/ -t code --recursive --merge
+```
+
+### preview cards
+preview generated cards before importing to anki:
+```bash
+python scripts/preview_cards.py cards.csv              # text preview
+python scripts/preview_cards.py cards.csv -f html > preview.html
+python scripts/preview_cards.py cards.csv --interactive  # browse cards
+```
+
 ## script details
 
 ### shared utilities (`anki_utils.py`)
@@ -75,12 +90,17 @@ each generator can be used standalone or through the unified cli:
 - **image_occlusion.py**: visual learning with svg overlays
 - **fact_to_cards.py**: multi-perspective fact cards
 - **mnemonic_generator.py**: memory palace and association techniques
+- **batch_processor.py**: bulk processing of multiple files
+- **preview_cards.py**: preview and browse cards before import
+- **cli_utils.py**: shared cli utilities and helpers
 
 ## testing
 
-run the test suite:
+run the test suites:
 ```bash
-python -m unittest scripts/test_anki_utils.py
+python scripts/test_anki_utils.py          # unit tests
+python scripts/test_cli_integration.py     # cli integration tests  
+python scripts/test_batch_preview.py       # batch & preview tests
 ```
 
 ## tips for quality cards
