@@ -24,7 +24,7 @@ import re
 from typing import List, Tuple, Optional, Dict
 from pathlib import Path
 from io_utils import InputHandler, OutputHandler, ArgumentParser
-from anki_utils import escape_html
+from anki_utils import AnkiFormatter
 
 
 class IncrementalReadingProcessor:
@@ -99,7 +99,10 @@ class IncrementalReadingProcessor:
             words = text.split()
             chunks = []
             
-            for i in range(0, len(words), self.chunk_size - self.overlap):
+            # ensure we have a positive step for range
+            step = max(1, self.chunk_size - self.overlap)
+            
+            for i in range(0, len(words), step):
                 chunk_words = words[i:i + self.chunk_size]
                 if chunk_words:
                     chunks.append(' '.join(chunk_words))
@@ -157,11 +160,11 @@ class IncrementalReadingProcessor:
             if i == 0:
                 # first chunk - no context needed
                 front = f"[Chunk {chunk_num}] Read and understand this text"
-                back = escape_html(chunk)
+                back = AnkiFormatter.escape_html(chunk)
             else:
                 # include reference to previous chunk
                 front = f"[Chunk {chunk_num}] Continue reading (follows Chunk {i})"
-                back = escape_html(chunk)
+                back = AnkiFormatter.escape_html(chunk)
                 
                 # add context hint if overlapping
                 if self.overlap > 0:
@@ -179,7 +182,7 @@ class IncrementalReadingProcessor:
             # summary card
             if self.add_summaries:
                 front = f"[Chunk {chunk_num}] Summarize the main idea"
-                back = f"<i>Chunk text:</i><br>{escape_html(self._truncate(chunk, 100))}<br><br><i>Write your own summary</i>"
+                back = f"<i>Chunk text:</i><br>{AnkiFormatter.escape_html(self._truncate(chunk, 100))}<br><br><i>Write your own summary</i>"
                 cards.append((front, back, "summary"))
             
             # connection card
