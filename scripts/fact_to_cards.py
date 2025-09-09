@@ -2,53 +2,35 @@
 """
 Fact to Cards Converter for Anki
 Converts structured facts into multiple flashcard types.
+
+This module uses shared utilities from anki_utils for consistent formatting.
 """
 
 import sys
 import argparse
 import json
-import csv
 import re
 from typing import List, Dict, Any, Tuple
+from anki_utils import AnkiFormatter, AnkiWriter, TextParser
 
 
 class FactConverter:
     """Convert facts to various card formats."""
     
     def __init__(self):
-        self.cards = []
+        self.formatter = AnkiFormatter()
+        self.parser = TextParser()
+        self.writer = AnkiWriter()
     
     def parse_fact(self, text: str) -> Dict[str, Any]:
-        """Parse a fact from text format."""
-        lines = text.strip().split('\n')
-        fact = {}
-        current_key = None
-        current_value = []
-        
-        for line in lines:
-            # Check if line starts a new field (contains ':')
-            if ':' in line and not line.startswith(' '):
-                if current_key:
-                    fact[current_key] = '\n'.join(current_value).strip()
-                
-                parts = line.split(':', 1)
-                current_key = parts[0].strip().lower()
-                current_value = [parts[1].strip()] if len(parts) > 1 else []
-            else:
-                # Continuation of previous field
-                current_value.append(line.strip())
-        
-        # Don't forget the last field
-        if current_key:
-            fact[current_key] = '\n'.join(current_value).strip()
-        
-        return fact
+        """Parse a fact from text format using shared parser."""
+        return self.parser.parse_structured_fact(text)
     
     def create_basic_cards(self, fact: Dict[str, Any]) -> List[Tuple[str, str]]:
         """Create basic front/back cards from fact."""
         cards = []
         
-        # Get the main subject (title, name, term, or concept)
+        # Get the main subject
         subject = (fact.get('title') or fact.get('name') or 
                   fact.get('term') or fact.get('concept', 'Subject'))
         
@@ -57,15 +39,18 @@ class FactConverter:
         
         for field, value in fact.items():
             if field not in skip_fields and value:
+                # Format value with proper escaping
+                formatted_value = self.formatter.process_text(value)
+                
                 # Forward card: field -> value
-                front = f"<b>{subject}</b><br><br>{field.title()}?"
-                back = value
+                front = f"<b>{self.formatter.escape_html(subject)}</b><br><br>{field.title()}?"
+                back = formatted_value
                 cards.append((front, back))
                 
                 # Reverse card for definitions
                 if field in ['definition', 'meaning', 'description']:
-                    front_rev = f"What term is defined as:<br><br>{value}"
-                    back_rev = subject
+                    front_rev = f"What term is defined as:<br><br>{formatted_value}"
+                    back_rev = self.formatter.escape_html(subject)
                     cards.append((front_rev, back_rev))
         
         return cards
@@ -76,40 +61,27 @@ class FactConverter:
         subject = (fact.get('title') or fact.get('name') or 
                   fact.get('topic', 'Subject'))
         
+        formatted_subject = self.formatter.escape_html(subject)
+        
         for field, value in fact.items():
             # Check if value contains a list
             if '\n' in value or '•' in value or '-' in value:
-                items = self._extract_list_items(value)
+                items = self.parser.extract_list_items(value)
                 
                 if len(items) > 1:
                     # Card asking for all items
-                    front = f"<b>{subject}</b><br><br>List all {field}:"
-                    back = '<br>'.join(f"• {item}" for item in items)
+                    front = f"<b>{formatted_subject}</b><br><br>List all {field}:"
+                    formatted_items = [self.formatter.escape_html(item) for item in items]
+                    back = '<br>'.join(f"• {item}" for item in formatted_items)
                     cards.append((front, back))
                     
                     # Individual cards for each item
                     for i, item in enumerate(items, 1):
-                        front = f"<b>{subject}</b><br><br>{field.title()} #{i}?"
-                        back = item
+                        front = f"<b>{formatted_subject}</b><br><br>{field.title()} #{i}?"
+                        back = self.formatter.escape_html(item)
                         cards.append((front, back))
         
         return cards
-    
-    def _extract_list_items(self, text: str) -> List[str]:
-        """Extract list items from text."""
-        items = []
-        lines = text.split('\n')
-        
-        for line in lines:
-            line = line.strip()
-            # Remove common list markers
-            line = re.sub(r'^[-•*]\s*', '', line)
-            line = re.sub(r'^\d+[\.)]\s*', '', line)
-            
-            if line:
-                items.append(line)
-        
-        return items
     
     def create_comparison_cards(self, facts: List[Dict[str, Any]]) -> List[Tuple[str, str]]:
         """Create comparison cards between multiple facts."""
@@ -138,11 +110,15 @@ class FactConverter:
             for fact in facts:
                 name = fact.get('title') or fact.get('name', 'Item')
                 value = fact.get(field, 'N/A')
-                comparison += f"<tr><td><b>{name}</b></td><td>{value}</td></tr>"
+                name_escaped = self.formatter.escape_html(name)
+                value_escaped = self.formatter.escape_html(value)
+                comparison += f"<tr><td><b>{name_escaped}</b></td><td>{value_escaped}</td></tr>"
             
             comparison += "</table>"
             
-            front = f"Compare {field} between: {', '.join([f.get('title', f.get('name', 'Item')) for f in facts])}"
+            names = [f.get('title', f.get('name', 'Item')) for f in facts]
+            names_escaped = [self.formatter.escape_html(n) for n in names]
+            front = f"Compare {field} between: {', '.join(names_escaped)}"
             cards.append((front, comparison))
         
         return cards
@@ -153,23 +129,27 @@ class FactConverter:
         subject = (fact.get('title') or fact.get('name') or 
                   fact.get('term', 'Subject'))
         
+        formatted_subject = self.formatter.escape_html(subject)
+        
         # Look for example fields
         example_fields = ['example', 'examples', 'usage', 'application']
         
         for field in example_fields:
             if field in fact:
-                examples = self._extract_list_items(fact[field])
+                examples = self.parser.extract_list_items(fact[field])
                 
                 for i, example in enumerate(examples, 1):
+                    formatted_example = self.formatter.escape_html(example)
+                    
                     # Ask to identify the concept from example
-                    front = f"What concept does this example illustrate?<br><br>{example}"
-                    back = subject
+                    front = f"What concept does this example illustrate?<br><br>{formatted_example}"
+                    back = formatted_subject
                     cards.append((front, back))
                     
                     # Ask for example of concept
                     if i == 1:  # Only for first example to avoid too many cards
-                        front = f"Give an example of:<br><br><b>{subject}</b>"
-                        back = example
+                        front = f"Give an example of:<br><br><b>{formatted_subject}</b>"
+                        back = formatted_example
                         cards.append((front, back))
         
         return cards
@@ -178,6 +158,7 @@ class FactConverter:
         """Create cards for mathematical formulas."""
         cards = []
         subject = fact.get('title') or fact.get('name', 'Formula')
+        formatted_subject = self.formatter.escape_html(subject)
         
         formula_fields = ['formula', 'equation', 'expression']
         
@@ -185,24 +166,25 @@ class FactConverter:
             if field in fact:
                 formula = fact[field]
                 
-                # Convert LaTeX if needed
-                formula = re.sub(r'\$([^$]+)\$', r'\\(\1\\)', formula)
+                # Convert LaTeX using formatter
+                formula = self.formatter.convert_latex(formula)
                 
                 # Card 1: Name to formula
-                front = f"Write the formula for:<br><br><b>{subject}</b>"
+                front = f"Write the formula for:<br><br><b>{formatted_subject}</b>"
                 back = formula
                 cards.append((front, back))
                 
                 # Card 2: Formula to name
                 front = f"What is this formula?<br><br>{formula}"
-                back = subject
+                back = formatted_subject
                 cards.append((front, back))
                 
                 # Card 3: Variables explanation if present
                 if 'variables' in fact or 'where' in fact:
                     vars_text = fact.get('variables') or fact.get('where')
-                    front = f"In the {subject} formula:<br><br>{formula}<br><br>What do the variables represent?"
-                    back = vars_text
+                    formatted_vars = self.formatter.process_text(vars_text)
+                    front = f"In the {formatted_subject} formula:<br><br>{formula}<br><br>What do the variables represent?"
+                    back = formatted_vars
                     cards.append((front, back))
         
         return cards
@@ -243,9 +225,7 @@ def process_facts_file(input_file, output_file, card_types, format='csv'):
     
     # Output cards
     if format == 'csv':
-        writer = csv.writer(output_file, delimiter='\t')
-        for front, back in all_cards:
-            writer.writerow([front, back])
+        converter.writer.write_csv(all_cards, output_file)
     else:  # json
         json.dump([{'front': f, 'back': b} for f, b in all_cards], 
                  output_file, indent=2)
@@ -254,6 +234,7 @@ def process_facts_file(input_file, output_file, card_types, format='csv'):
 def main():
     parser = argparse.ArgumentParser(
         description='Convert structured facts to Anki flashcards',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog='''
 Example fact format:
   Title: Python Lists
@@ -264,6 +245,10 @@ Example fact format:
   Key Methods:
   - append(): Add item to end
   - pop(): Remove and return last item
+
+Usage:
+  python fact_to_cards.py facts.txt -t basic list -o cards.csv
+  echo "Term: CPU\\nDefinition: Central Processing Unit" | python fact_to_cards.py
         '''
     )
     parser.add_argument(
