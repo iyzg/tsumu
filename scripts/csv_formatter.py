@@ -7,41 +7,14 @@ Converts CSV data to Anki-compatible format with proper escaping and formatting.
 import csv
 import sys
 import argparse
-import re
-
-
-def escape_html(text):
-    """Escape HTML characters for Anki."""
-    replacements = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-    }
-    for old, new in replacements.items():
-        text = text.replace(old, new)
-    return text
-
-
-def convert_latex(text):
-    """Convert $...$ to \\(...\\) for MathJax compatibility in Anki."""
-    # Convert display math $$...$$ to \[...\]
-    text = re.sub(r'\$\$([^$]+)\$\$', r'\\[\1\\]', text)
-    # Convert inline math $...$ to \(...\)
-    text = re.sub(r'\$([^$]+)\$', r'\\(\1\\)', text)
-    return text
-
-
-def format_newlines(text):
-    """Convert newlines to HTML breaks for Anki."""
-    return text.replace('\n', '<br>')
+from anki_utils import AnkiFormatter
 
 
 def process_csv(input_file, output_file, delimiter=',', has_header=False, 
                 escape=True, latex=True, newlines=True):
     """Process CSV file for Anki import."""
     
+    formatter = AnkiFormatter()
     reader = csv.reader(input_file, delimiter=delimiter)
     writer = csv.writer(output_file, delimiter='\t', quoting=csv.QUOTE_MINIMAL)
     
@@ -51,12 +24,7 @@ def process_csv(input_file, output_file, delimiter=',', has_header=False,
     for row in reader:
         processed_row = []
         for field in row:
-            if escape:
-                field = escape_html(field)
-            if latex:
-                field = convert_latex(field)
-            if newlines:
-                field = format_newlines(field)
+            field = formatter.process_text(field, escape, latex, newlines)
             processed_row.append(field)
         writer.writerow(processed_row)
 
