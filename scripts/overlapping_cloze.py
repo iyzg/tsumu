@@ -19,6 +19,10 @@ import re
 import sys
 from itertools import product
 from typing import List, Tuple, Union
+from io_utils import (
+    read_input, write_output,
+    create_argument_parser, add_common_arguments
+)
 
 
 class ClozeElement:
@@ -157,37 +161,40 @@ def process_line(line: str, delimiter: str = '%') -> List[str]:
 
 def main():
     """main entry point for the overlapping cloze tool."""
-    parser = argparse.ArgumentParser(
-        description='generate overlapping cloze deletion cards from marked text',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-examples:
-    echo "david hume was born in %1711%" | %(prog)s
-    
-    %(prog)s --delimiter @ < facts.txt > cards.tsv
-    
-    echo "the @capital@ of @france@ is @paris@" | %(prog)s --delimiter @
-        """
+    parser = create_argument_parser(
+        'overlapping cloze deletion tool',
+        'generate overlapping cloze deletion cards from marked text'
     )
     
+    # add common arguments (input, output, separator)
+    add_common_arguments(parser)
+    
+    # add specific arguments for this tool
     parser.add_argument(
-        '--delimiter', '-d',
+        '--answer-delimiter',
         default='%',
-        help='delimiter character for marking answers (default: %%)'
+        help='delimiter character for marking answers in input text (default: %%)'
     )
     
-    parser.add_argument(
-        '--verbose', '-v',
-        action='store_true',
-        help='show statistics about generated cards'
-    )
+    # update epilog with examples
+    parser.epilog = """
+examples:
+    echo "david hume was born in %1711%" | python overlapping_cloze.py
+    python overlapping_cloze.py facts.txt --answer-delimiter @ -o cards.tsv
+    echo "the @capital@ of @france@ is @paris@" | python overlapping_cloze.py --answer-delimiter @
+    """
     
     args = parser.parse_args()
     
-    # read from stdin
-    lines = sys.stdin.readlines()
+    # read input using io_utils
+    input_text = read_input(args.input)
     
-    total_cards = 0
+    if not input_text:
+        print("error: no input provided", file=sys.stderr)
+        return 1
+    
+    lines = input_text.strip().split('\n')
+    all_cards = []
     
     # process each line
     for line in lines:
@@ -196,19 +203,25 @@ examples:
             continue
         
         # generate cards for this line
-        cards = process_line(line, args.delimiter)
+        cards = process_line(line, args.answer_delimiter)
         
-        # output the cards
+        # convert to tuples for io_utils
         for card in cards:
-            print(card)
-        
-        total_cards += len(cards)
+            parts = card.split('\t')
+            if len(parts) == 2:
+                all_cards.append((parts[0], parts[1]))
+    
+    # write output using io_utils
+    if all_cards:
+        write_output(all_cards, args.output)
     
     # show statistics if verbose
     if args.verbose:
-        print(f"\n# generated {total_cards} cards from {len(lines)} lines", 
+        print(f"generated {len(all_cards)} cards from {len(lines)} lines", 
               file=sys.stderr)
+    
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
