@@ -109,8 +109,12 @@ def main():
         if script_args and script_args[0] == '--':
             script_args = script_args[1:]
         
+        # Pass stdin through to the subprocess
         result = subprocess.run(
             [sys.executable, str(script_path)] + script_args,
+            stdin=sys.stdin,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
             check=False
         )
         return result.returncode
