@@ -251,6 +251,38 @@ python scripts/batch_processor.py course_materials/ \
     --merge -o complete_course.csv
 ```
 
+## vocabulary learning
+
+### synonym web for interconnected learning
+
+create cards that test word relationships and build vocabulary networks:
+
+```bash
+# basic synonym/antonym cards from word list
+echo "happy sad big small fast slow" | python scripts/anki.py synonym
+
+# explore related words to depth 2
+python scripts/anki.py synonym core_vocab.txt --depth 2 -o vocab_network.csv
+
+# specific card types only
+python scripts/anki.py synonym words.txt --types synonym antonym starts_with
+
+# context-based cards
+python scripts/anki.py synonym words.txt --types context odd_one_out -o context_cards.csv
+
+# without wordnet (uses basic built-in data)
+python scripts/anki.py synonym words.txt --no-wordnet -o basic_vocab.csv
+```
+
+card types generated:
+- **synonym**: "give a synonym for: happy"
+- **antonym**: "give an antonym for: big"
+- **starts_with**: "give a synonym for fast that starts with R"
+- **context**: "fill in with synonym of good: the ___ solution worked"
+- **odd_one_out**: "which is not a synonym of happy? [list of words]"
+- **hypernym**: "what is a more general term for dog?"
+- **hyponym**: "what is a specific type of vehicle?"
+
 ## common patterns
 
 ### daily review deck
