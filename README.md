@@ -70,6 +70,20 @@ python scripts/preview_cards.py cards.csv -f html > preview.html
 python scripts/preview_cards.py cards.csv --interactive  # browse cards
 ```
 
+### smart content parsing
+automatically detect and convert various content types:
+```bash
+python scripts/smart_parser.py notes.txt --analyze  # preview what will be generated
+python scripts/smart_parser.py notes.txt -o smart_cards.csv
+```
+
+### deck building
+combine and organize cards from multiple sources:
+```bash
+python scripts/deck_builder.py vocab.csv formulas.csv examples.csv \
+    -o study_deck.csv --name "Physics 101" --remove-duplicates
+```
+
 ## script details
 
 ### shared utilities (`anki_utils.py`)
@@ -92,6 +106,8 @@ each generator can be used standalone or through the unified cli:
 - **mnemonic_generator.py**: memory palace and association techniques
 - **batch_processor.py**: bulk processing of multiple files
 - **preview_cards.py**: preview and browse cards before import
+- **smart_parser.py**: auto-detect content types and generate appropriate cards
+- **deck_builder.py**: combine, organize, and optimize card decks
 - **cli_utils.py**: shared cli utilities and helpers
 
 ## testing
@@ -111,6 +127,10 @@ python scripts/test_batch_preview.py       # batch & preview tests
 - use images when visual memory helps
 - create reverse cards for important definitions
 - test your cards before bulk creating
+
+## cookbook
+
+check out `COOKBOOK.md` for detailed recipes and workflows for common use cases.
 
 ## examples directory
 
