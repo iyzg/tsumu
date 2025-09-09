@@ -18,6 +18,7 @@ Commands:
     vocabulary  Generate comprehensive vocabulary flashcards
     poetry      Generate cards for memorizing poetry and verse
     overlap     Generate overlapping cloze deletion cards
+    list        Generate cards for memorizing ordered lists
     
 Examples:
     python anki.py markdown notes.md -o cards.csv
@@ -71,6 +72,10 @@ COMMANDS = {
     'overlap': {
         'script': 'overlapping_cloze.py',
         'help': 'Generate overlapping cloze deletion cards'
+    },
+    'list': {
+        'script': 'list_memorization.py',
+        'help': 'Generate cards for memorizing ordered lists'
     }
 }
 
