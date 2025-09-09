@@ -139,6 +139,21 @@ python scripts/mnemonic_generator.py -t halves \
     --input poem.txt -o poem_halves.csv
 ```
 
+### overlapping cloze deletions for comprehensive learning
+
+```bash
+# create multiple overlapping blanks from marked text
+echo "the %mitochondria% is the %powerhouse% of the %cell%" | \
+    python scripts/anki.py overlap -o cell_cards.tsv
+
+# use custom delimiter for marking answers
+echo "einstein published the @theory of relativity@ in @1905@" | \
+    python scripts/anki.py overlap --delimiter @ -o einstein.tsv
+
+# process file with facts (generates all combinations)
+python scripts/anki.py overlap < facts.txt > comprehensive_cards.tsv
+```
+
 ## content preparation tips
 
 ### formatting for smart parser

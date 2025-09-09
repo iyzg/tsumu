@@ -17,6 +17,7 @@ Commands:
     mnemonic    Generate mnemonic cards using memory techniques
     vocabulary  Generate comprehensive vocabulary flashcards
     poetry      Generate cards for memorizing poetry and verse
+    overlap     Generate overlapping cloze deletion cards
     
 Examples:
     python anki.py markdown notes.md -o cards.csv
@@ -66,6 +67,10 @@ COMMANDS = {
     'poetry': {
         'script': 'poetry_memorization.py',
         'help': 'Generate cards for memorizing poetry and verse'
+    },
+    'overlap': {
+        'script': 'overlapping_cloze.py',
+        'help': 'Generate overlapping cloze deletion cards'
     }
 }
 
