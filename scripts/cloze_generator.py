@@ -7,21 +7,15 @@ Creates cloze deletion cards from text with various patterns.
 import sys
 import argparse
 import re
-import csv
+from anki_utils import ClozeGenerator, AnkiWriter, TextParser
 
 
 def create_basic_cloze(text, keywords):
     """Create cloze deletions for specified keywords."""
+    generator = ClozeGenerator()
     cards = []
     for i, keyword in enumerate(keywords, 1):
-        # Create a cloze for each keyword occurrence
-        pattern = re.escape(keyword)
-        cloze_text = re.sub(
-            pattern, 
-            f"{{{{c{i}::{keyword}}}}}", 
-            text, 
-            flags=re.IGNORECASE
-        )
+        cloze_text = generator.create_cloze(text, keyword, i, case_sensitive=False)
         if cloze_text != text:  # Only add if keyword was found
             cards.append(cloze_text)
     return cards
@@ -29,11 +23,12 @@ def create_basic_cloze(text, keywords):
 
 def create_sentence_cloze(text):
     """Create cloze deletions for each sentence."""
-    sentences = re.split(r'(?<=[.!?])\s+', text)
+    parser = TextParser()
+    sentences = parser.split_sentences(text)
     cards = []
     
     for i, sentence in enumerate(sentences, 1):
-        if sentence.strip():
+        if sentence:
             cloze_text = text.replace(
                 sentence, 
                 f"{{{{c{i}::{sentence}}}}}"
@@ -70,23 +65,20 @@ def create_numbered_list_cloze(text):
 
 def create_definition_cloze(text):
     """Create cloze deletions for definition patterns (term: definition)."""
-    lines = text.split('\n')
+    parser = TextParser()
+    pairs = parser.parse_key_value(text, ':')
     cards = []
     
-    for line in lines:
-        if ':' in line:
-            parts = line.split(':', 1)
-            if len(parts) == 2:
-                term = parts[0].strip()
-                definition = parts[1].strip()
-                
-                # Card 1: Hide the term
-                card1 = line.replace(term, f"{{{{c1::{term}}}}}")
-                cards.append(card1)
-                
-                # Card 2: Hide the definition
-                card2 = line.replace(definition, f"{{{{c1::{definition}}}}}")
-                cards.append(card2)
+    for term, definition in pairs:
+        line = f"{term}: {definition}"
+        
+        # Card 1: Hide the term
+        card1 = line.replace(term, f"{{{{c1::{term}}}}}")
+        cards.append(card1)
+        
+        # Card 2: Hide the definition
+        card2 = line.replace(definition, f"{{{{c1::{definition}}}}}")
+        cards.append(card2)
     
     return cards
 
@@ -177,10 +169,7 @@ def main():
     
     # Output cards
     if args.csv:
-        writer = csv.writer(args.output)
-        writer.writerow(['Text'])  # Header for Anki
-        for card in cards:
-            writer.writerow([card])
+        AnkiWriter.write_cloze_csv(cards, args.output)
     else:
         for card in cards:
             args.output.write(card + '\n\n')
