@@ -32,6 +32,8 @@ from pathlib import Path
 from typing import List, Dict, Tuple, Optional
 from dataclasses import dataclass, field
 
+from anki_utils import AnkiFormatter, AnkiWriter
+
 
 @dataclass
 class VocabularyEntry:
@@ -344,16 +346,18 @@ class VocabularyCardGenerator:
     
     def write_cards(self, cards: List[Dict[str, str]], output_path: Path):
         """Write cards to CSV file in Anki format."""
+        # Convert cards to tuples for AnkiWriter
+        card_tuples = []
+        for card in cards:
+            if card['type'] == 'cloze':
+                # Cloze cards only need the text field
+                card_tuples.append((card['front'], card['tags']))
+            else:
+                # Basic cards need front and back
+                card_tuples.append((card['front'], card['back'], card['tags']))
+        
         with open(output_path, 'w', encoding='utf-8', newline='') as f:
-            writer = csv.writer(f, delimiter='\t')
-            
-            for card in cards:
-                if card['type'] == 'cloze':
-                    # Cloze cards only need the text field
-                    writer.writerow([card['front'], card['tags']])
-                else:
-                    # Basic cards need front and back
-                    writer.writerow([card['front'], card['back'], card['tags']])
+            AnkiWriter.write_csv(card_tuples, f)
         
         print(f"Generated {len(cards)} cards to {output_path}")
 
