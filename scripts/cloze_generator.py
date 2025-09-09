@@ -5,9 +5,9 @@ Creates cloze deletion cards from text with various patterns.
 """
 
 import sys
-import argparse
 import re
 from anki_utils import ClozeGenerator, AnkiWriter, TextParser
+from io_utils import create_argument_parser, add_common_arguments
 
 
 def create_basic_cloze(text, keywords):
@@ -124,17 +124,11 @@ def process_text(text, mode='basic', keywords=None, chunk_size=20):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description='Generate cloze deletion cards for Anki'
+    parser = create_argument_parser(
+        'Cloze Deletion Generator',
+        'Generate cloze deletion cards for Anki'
     )
-    parser.add_argument(
-        'input', nargs='?', type=argparse.FileType('r'), default=sys.stdin,
-        help='Input text file (default: stdin)'
-    )
-    parser.add_argument(
-        '-o', '--output', type=argparse.FileType('w'), default=sys.stdout,
-        help='Output file (default: stdout)'
-    )
+    add_common_arguments(parser)
     parser.add_argument(
         '-m', '--mode', 
         choices=['basic', 'sentence', 'list', 'definition', 'incremental'],
@@ -157,7 +151,11 @@ def main():
     args = parser.parse_args()
     
     # Read input text
-    text = args.input.read().strip()
+    if args.input:
+        with open(args.input, 'r') as f:
+            text = f.read().strip()
+    else:
+        text = sys.stdin.read().strip()
     
     # Generate cloze cards
     cards = process_text(
@@ -169,10 +167,18 @@ def main():
     
     # Output cards
     if args.csv:
-        AnkiWriter.write_cloze_csv(cards, args.output)
+        if args.output:
+            with open(args.output, 'w') as f:
+                AnkiWriter.write_cloze_csv(cards, f)
+        else:
+            AnkiWriter.write_cloze_csv(cards, sys.stdout)
     else:
-        for card in cards:
-            args.output.write(card + '\n\n')
+        output_text = '\n\n'.join(cards)
+        if args.output:
+            with open(args.output, 'w') as f:
+                f.write(output_text + '\n')
+        else:
+            print(output_text)
 
 
 if __name__ == '__main__':
