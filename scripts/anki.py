@@ -81,6 +81,10 @@ COMMANDS = {
     'reveal': {
         'script': 'progressive_reveal.py',
         'help': 'Generate progressive reveal cards for text memorization'
+    },
+    'synonym': {
+        'script': 'synonym_web.py',
+        'help': 'Generate interconnected vocabulary cards with synonyms/antonyms'
     }
 }
 
