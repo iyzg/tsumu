@@ -21,6 +21,9 @@ available commands:
 - `fact` - convert structured facts to q&a cards
 - `mnemonic` - generate mnemonic cards using memory techniques
 - `poetry` - generate cards for memorizing poetry and verse
+- `list` - generate cards for memorizing ordered lists
+- `overlap` - generate overlapping cloze deletion cards
+- `reveal` - generate progressive reveal cards for text memorization
 
 ## usage examples
 
@@ -92,6 +95,13 @@ echo -e "roses are red\nviolets are blue" | python scripts/anki.py poetry
 python scripts/anki.py poetry poem.txt --progressive --preserve-rhymes -o poem_cards.csv
 ```
 
+### progressive reveal
+memorize passages by progressively revealing or hiding text:
+```bash
+echo "to be or not to be" | python scripts/anki.py reveal -o shakespeare.csv
+python scripts/anki.py reveal speech.txt --unit line --reverse -o speech_cards.csv
+```
+
 ### deck building
 combine and organize cards from multiple sources:
 ```bash
@@ -121,6 +131,9 @@ each generator can be used standalone or through the unified cli:
 - **mnemonic_generator.py**: memory palace and association techniques
 - **vocabulary_cards.py**: comprehensive vocabulary learning with etymology and context
 - **poetry_memorization.py**: progressive cloze deletion for memorizing poetry and verse
+- **list_memorization.py**: comprehensive cards for memorizing ordered sequences
+- **overlapping_cloze.py**: multiple overlapping cloze deletions for thorough learning
+- **progressive_reveal.py**: progressively reveal or hide text for passage memorization
 - **batch_processor.py**: bulk processing of multiple files
 - **preview_cards.py**: preview and browse cards before import
 - **smart_parser.py**: auto-detect content types and generate appropriate cards

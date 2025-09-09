@@ -19,6 +19,7 @@ Commands:
     poetry      Generate cards for memorizing poetry and verse
     overlap     Generate overlapping cloze deletion cards
     list        Generate cards for memorizing ordered lists
+    reveal      Generate progressive reveal cards for text memorization
     
 Examples:
     python anki.py markdown notes.md -o cards.csv
@@ -76,6 +77,10 @@ COMMANDS = {
     'list': {
         'script': 'list_memorization.py',
         'help': 'Generate cards for memorizing ordered lists'
+    },
+    'reveal': {
+        'script': 'progressive_reveal.py',
+        'help': 'Generate progressive reveal cards for text memorization'
     }
 }
 

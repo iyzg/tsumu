@@ -154,6 +154,36 @@ echo "einstein published the @theory of relativity@ in @1905@" | \
 python scripts/anki.py overlap < facts.txt > comprehensive_cards.tsv
 ```
 
+### memorizing ordered lists comprehensively
+
+```bash
+# generate cards for learning positions in a list
+echo -e "george washington\njohn adams\nthomas jefferson" | \
+    python scripts/anki.py list -c president -o presidents.csv
+
+# creates cards asking:
+# - what is the 1st president?
+# - what position is john adams?
+# - what comes after george washington?
+# - what comes before thomas jefferson?
+```
+
+### progressive reveal for text memorization
+
+```bash
+# progressively reveal text word by word
+echo "to be or not to be" | python scripts/anki.py reveal -o hamlet.csv
+
+# reveal by lines for poetry
+python scripts/anki.py reveal poem.txt --unit line -o poem_cards.csv
+
+# reverse mode - start visible, progressively hide
+python scripts/anki.py reveal quote.txt --reverse -o quote_cards.csv
+
+# reveal multiple words at once
+python scripts/anki.py reveal passage.txt --chunk-size 2 -o passage.csv
+```
+
 ## content preparation tips
 
 ### formatting for smart parser
