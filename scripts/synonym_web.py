@@ -20,7 +20,6 @@ examples:
 """
 
 import argparse
-import csv
 import sys
 from typing import List, Dict, Set, Tuple, Optional
 from collections import defaultdict
@@ -33,7 +32,8 @@ except ImportError:
     print("warning: nltk not installed. using basic synonym data only.")
     wn = None
 
-from anki_utils import AnkiFormatter, AnkiWriter
+from anki_utils import AnkiFormatter
+from io_utils import InputHandler, OutputHandler, ArgumentParser
 
 # basic synonym/antonym data for when nltk isn't available
 BASIC_SYNONYMS = {
@@ -298,16 +298,12 @@ class SynonymWeb:
 
 def main():
     """main entry point for synonym web generator"""
-    parser = argparse.ArgumentParser(
-        description='Generate interconnected vocabulary cards with synonyms and antonyms',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
+    parser = ArgumentParser.create_basic_parser(
+        'Generate interconnected vocabulary cards with synonyms and antonyms',
         epilog=__doc__
     )
     
-    parser.add_argument('input', nargs='?', type=str,
-                       help='Input file with words (one per line) or use stdin')
-    parser.add_argument('-o', '--output', type=str,
-                       help='Output CSV file (default: stdout)')
+    # add specific arguments
     parser.add_argument('--depth', type=int, default=1,
                        help='Depth of word relationships to explore (default: 1)')
     parser.add_argument('--types', nargs='+', 
@@ -321,12 +317,8 @@ def main():
     
     args = parser.parse_args()
     
-    # read input words
-    if args.input:
-        with open(args.input, 'r') as f:
-            text = f.read()
-    else:
-        text = sys.stdin.read()
+    # read input words using io_utils
+    text = InputHandler.get_input(args.input)
     
     # extract words
     words = []
@@ -360,14 +352,10 @@ def main():
             formatter.process_text(card['answer'], escape_html=False, format_newlines=False)
         ))
     
-    # write output
-    if args.output:
-        with open(args.output, 'w', newline='') as f:
-            AnkiWriter.write_csv(formatted_cards, f)
-        print(f"Generated {len(formatted_cards)} cards to {args.output}")
-    else:
-        # write to stdout
-        AnkiWriter.write_csv(formatted_cards, sys.stdout)
+    # write output using io_utils
+    OutputHandler.write_cards(formatted_cards, args.output, 
+                             delimiter=args.delimiter, 
+                             verbose=args.verbose)
     
     return 0
 
