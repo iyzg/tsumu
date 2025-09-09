@@ -22,10 +22,10 @@ Usage:
 
 import sys
 import re
-import argparse
 from typing import List, Tuple, Optional
 from dataclasses import dataclass
-from anki_utils import AnkiFormatter, AnkiWriter
+from anki_utils import AnkiFormatter
+from io_utils import InputHandler, OutputHandler, ArgumentParser
 
 
 @dataclass
@@ -246,8 +246,18 @@ class PoetryMemorizer:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description='Generate Anki cards for memorizing poetry and verse'
+    parser = ArgumentParser.create_basic_parser(
+        'Generate Anki cards for memorizing poetry and verse',
+        epilog="""examples:
+    # basic poem memorization with cloze deletions
+    echo -e "Roses are red\\nViolets are blue" | python poetry_memorization.py
+    
+    # memorize with rhyme hints preserved
+    python poetry_memorization.py poem.txt --preserve-rhymes -o cards.csv
+    
+    # progressive difficulty cards
+    python poetry_memorization.py haiku.txt --progressive -o cards.csv
+        """
     )
     parser.add_argument(
         '--preserve-rhymes',
@@ -265,18 +275,18 @@ def main():
         default='poem',
         help='Input format (affects card generation)'
     )
-    parser.add_argument(
-        '-o', '--output',
-        help='Output CSV file (default: stdout)'
-    )
     
     args = parser.parse_args()
     
     # Read input
-    text = sys.stdin.read()
+    try:
+        text = InputHandler.get_input(args.input)
+    except FileNotFoundError as e:
+        print(f"error: {e}", file=sys.stderr)
+        sys.exit(1)
     
     if not text.strip():
-        print("Error: No input provided", file=sys.stderr)
+        print("error: no input provided", file=sys.stderr)
         sys.exit(1)
     
     # Parse poetry structure
@@ -291,18 +301,12 @@ def main():
     cards = memorizer.create_cards(stanzas)
     
     # Write output
-    writer = AnkiWriter()
-    
-    if args.output:
-        writer.write_csv(cards, args.output)
-        print(f"Generated {len(cards)} cards to {args.output}", file=sys.stderr)
-    else:
-        # Write to stdout
-        import csv
-        output = csv.writer(sys.stdout)
-        for card in cards:
-            output.writerow(card)
-        print(f"Generated {len(cards)} cards", file=sys.stderr)
+    OutputHandler.write_cards(
+        cards,
+        args.output,
+        delimiter=args.delimiter,
+        verbose=args.verbose
+    )
 
 
 if __name__ == '__main__':

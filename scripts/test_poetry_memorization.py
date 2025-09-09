@@ -161,7 +161,7 @@ class TestCLIIntegration(unittest.TestCase):
                     from poetry_memorization import main
                     main()
                 
-                self.assertIn("No input provided", mock_err.getvalue())
+                self.assertIn("no input provided", mock_err.getvalue())
     
     def test_basic_poem_processing(self):
         """Test processing a basic poem through CLI."""
@@ -169,19 +169,15 @@ class TestCLIIntegration(unittest.TestCase):
         
         with patch('sys.stdin', StringIO(poem)):
             with patch('sys.stdout', new_callable=StringIO) as mock_out:
-                with patch('sys.stderr', new_callable=StringIO) as mock_err:
-                    with patch('sys.argv', ['poetry_memorization.py']):
-                        from poetry_memorization import main
-                        main()
+                with patch('sys.argv', ['poetry_memorization.py']):
+                    from poetry_memorization import main
+                    main()
                 
                 # Should generate cards to stdout
                 output = mock_out.getvalue()
                 self.assertIn("Test line", output)
-                
-                # Should report card count to stderr
-                stderr = mock_err.getvalue()
-                self.assertIn("Generated", stderr)
-                self.assertIn("cards", stderr)
+                # Verify it contains card data (tab-separated values)
+                self.assertIn("\t", output)
 
 
 if __name__ == '__main__':
