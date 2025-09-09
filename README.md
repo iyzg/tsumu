@@ -25,6 +25,8 @@ available commands:
 - `overlap` - generate overlapping cloze deletion cards
 - `reveal` - generate progressive reveal cards for text memorization
 - `synonym` - generate interconnected vocabulary cards with synonyms/antonyms
+- `context` - generate cards with varying context windows for deeper learning
+- `formula` - break down complex formulas into component-based cards
 
 ## usage examples
 
@@ -110,6 +112,20 @@ echo "happy sad big small" | python scripts/anki.py synonym --no-wordnet
 python scripts/anki.py synonym words.txt --depth 2 --types synonym antonym context -o vocab_web.csv
 ```
 
+### context window cards
+learn text with varying amounts of surrounding context:
+```bash
+echo 'The "Renaissance" was a cultural movement.' | python scripts/context_window.py --window-sizes "full,5,2,0"
+python scripts/context_window.py article.txt --focus "important term" --include-hints -o context_cards.csv
+```
+
+### formula breakdown
+master complex formulas by learning their components:
+```bash
+echo "E = mc^2 | E:energy, m:mass, c:speed of light" | python scripts/formula_breakdown.py --progressive
+python scripts/formula_breakdown.py physics_formulas.txt --include-units --reverse -o formula_cards.csv
+```
+
 ### deck building
 combine and organize cards from multiple sources:
 ```bash
@@ -143,6 +159,8 @@ each generator can be used standalone or through the unified cli:
 - **overlapping_cloze.py**: multiple overlapping cloze deletions for thorough learning
 - **progressive_reveal.py**: progressively reveal or hide text for passage memorization
 - **synonym_web.py**: interconnected vocabulary cards with word relationships
+- **context_window.py**: generate cards with varying context for deep comprehension
+- **formula_breakdown.py**: break down formulas into component-based learning cards
 - **batch_processor.py**: bulk processing of multiple files
 - **preview_cards.py**: preview and browse cards before import
 - **smart_parser.py**: auto-detect content types and generate appropriate cards
@@ -156,6 +174,11 @@ run the test suites:
 python scripts/test_anki_utils.py          # unit tests
 python scripts/test_cli_integration.py     # cli integration tests  
 python scripts/test_batch_preview.py       # batch & preview tests
+python scripts/test_io_utils.py            # io utilities tests
+python scripts/test_context_window.py      # context window tests
+python scripts/test_formula_breakdown.py   # formula breakdown tests
+python scripts/test_synonym_web.py         # synonym web tests
+python scripts/test_list_memorization.py   # list memorization tests
 ```
 
 ## tips for quality cards
