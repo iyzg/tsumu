@@ -89,7 +89,7 @@ my_list = [1, 2, 3]
         """Test cloze deletion generation."""
         text = "The quick brown fox jumps over the lazy dog."
         
-        result = self.run_cli('cloze -- --type word', text)
+        result = self.run_cli('cloze -- --mode basic', text)
         
         self.assertEqual(result.returncode, 0)
         self.assertIn('{{c1::', result.stdout)
@@ -121,7 +121,7 @@ Function: Executes program instructions"""
         text = "Test sentence one. Test sentence two."
         
         # Run cloze generator
-        result = self.run_cli('cloze -- --type sentence', text)
+        result = self.run_cli('cloze -- --mode sentence', text)
         
         self.assertEqual(result.returncode, 0)
         lines = result.stdout.strip().split('\n')
