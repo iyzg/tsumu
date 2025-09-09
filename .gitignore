@@ -3,3 +3,11 @@ prompt.md
 .examples/
 .agent/
 .resources
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*.egg-info/
+dist/
+build/
