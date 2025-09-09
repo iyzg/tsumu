@@ -14,6 +14,7 @@ Commands:
     code        Generate cards from code snippets
     image       Create image occlusion cards
     fact        Convert facts to Q&A cards
+    mnemonic    Generate mnemonic cards using memory techniques
     
 Examples:
     python anki.py markdown notes.md -o cards.csv
@@ -51,6 +52,10 @@ COMMANDS = {
     'fact': {
         'script': 'fact_to_cards.py',
         'help': 'Convert facts to Q&A cards'
+    },
+    'mnemonic': {
+        'script': 'mnemonic_generator.py',
+        'help': 'Generate mnemonic cards using memory techniques'
     }
 }
 
@@ -99,8 +104,13 @@ def main():
     
     # Run the selected script with remaining arguments
     try:
+        # Filter out the '--' separator if present
+        script_args = args.args
+        if script_args and script_args[0] == '--':
+            script_args = script_args[1:]
+        
         result = subprocess.run(
-            [sys.executable, str(script_path)] + args.args,
+            [sys.executable, str(script_path)] + script_args,
             check=False
         )
         return result.returncode
