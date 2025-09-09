@@ -255,3 +255,19 @@ def write_output(cards: List[tuple], output_file: Optional[str] = None,
                 delimiter: str = '\t') -> None:
     """write cards to output (backward compatible)"""
     OutputHandler.write_cards(cards, output_file, delimiter, verbose=False)
+
+
+def format_card(front: str, back: str, separator: str = '\t') -> str:
+    """format a card as tab-separated values"""
+    return f"{front}{separator}{back}"
+
+
+def create_argument_parser(prog_name: str, description: str) -> argparse.ArgumentParser:
+    """create a standard argument parser"""
+    return ArgumentParser.create_basic_parser(description)
+
+
+def add_common_arguments(parser: argparse.ArgumentParser) -> None:
+    """add common arguments to a parser"""
+    parser.add_argument('--separator', default='---',
+                       help='card separator (default: ---)')
