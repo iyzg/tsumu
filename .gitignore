@@ -1,13 +1,37 @@
+# Project specific
 prompt.md
 .gwern/
 .examples/
 .agent/
-.resources
+.resources/
+
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Testing
 .pytest_cache/
-*.egg-info/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# Distribution / packaging
 dist/
 build/
+*.egg-info/
+.eggs/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
