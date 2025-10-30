@@ -20,6 +20,11 @@ Commands:
     overlap     Generate overlapping cloze deletion cards
     list        Generate cards for memorizing ordered lists
     reveal      Generate progressive reveal cards for text memorization
+    synonym     Generate interconnected vocabulary cards with synonyms/antonyms
+    context     Generate cards with varying context windows
+    formula     Break down complex formulas into component-based cards
+    timeline    Generate chronological learning cards for dates and events
+    incremental Break long texts into incremental reading chunks
     
 Examples:
     python anki.py markdown notes.md -o cards.csv
@@ -85,6 +90,22 @@ COMMANDS = {
     'synonym': {
         'script': 'synonym_web.py',
         'help': 'Generate interconnected vocabulary cards with synonyms/antonyms'
+    },
+    'context': {
+        'script': 'context_window.py',
+        'help': 'Generate cards with varying context windows for deeper learning'
+    },
+    'formula': {
+        'script': 'formula_breakdown.py',
+        'help': 'Break down complex formulas into component-based cards'
+    },
+    'timeline': {
+        'script': 'timeline_cards.py',
+        'help': 'Generate chronological learning cards for dates and events'
+    },
+    'incremental': {
+        'script': 'incremental_reading.py',
+        'help': 'Break long texts into incremental reading chunks'
     }
 }
 
