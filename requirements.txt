@@ -1,0 +1,5 @@
+# Tsumu has no external dependencies!
+# All generators use only Python standard library.
+
+# Optional development dependencies
+pytest>=7.0  # for running tests

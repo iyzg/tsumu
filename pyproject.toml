@@ -5,34 +5,42 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tsumu"
 version = "0.1.0"
-description = "Anki flashcard automation toolkit - convert notes, code, and knowledge into high-quality Anki flashcards"
+description = "Turn notes, code, and knowledge into high-quality Anki flashcards"
 readme = "README.md"
 requires-python = ">=3.7"
-authors = [
-    {name = "Tsumu Contributors"}
-]
-keywords = ["anki", "flashcards", "spaced-repetition", "learning", "memorization"]
+license = {text = "MIT"}
+authors = [{name = "Tsumu Contributors"}]
+keywords = ["anki", "flashcards", "spaced-repetition", "learning", "memorization", "education"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Education",
     "Topic :: Education",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 
+# No external dependencies - uses only Python standard library!
 dependencies = []
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=7.0",
-]
+dev = ["pytest>=7.0"]
 
 [project.scripts]
 anki = "scripts.anki:main"
 
+[project.urls]
+Homepage = "https://github.com/iyzg/tsumu"
+Repository = "https://github.com/iyzg/tsumu"
+Issues = "https://github.com/iyzg/tsumu/issues"
+
 [tool.setuptools]
 packages = ["scripts"]
+
+[tool.setuptools.package-data]
+scripts = ["*.py"]

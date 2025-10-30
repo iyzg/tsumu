@@ -2,13 +2,18 @@
 
 # anki flashcard automation toolkit
 
-a collection of python scripts for turning your notes, code, and knowledge into high-quality anki flashcards. designed to make spaced repetition learning effortless.
+turn your notes, code, and knowledge into high-quality anki flashcards.
 
 ## quick start
 
-use the unified cli for all card generation:
-
 ```bash
+# install
+make install
+
+# run tests
+make test
+
+# generate cards
 python scripts/anki.py <command> [options]
 ```
 
@@ -30,197 +35,68 @@ available commands:
 - `timeline` - generate chronological learning cards for dates and events
 - `incremental` - break long texts into incremental reading chunks
 
-## usage examples
+## common examples
 
-### markdown to flashcards
-convert your markdown notes into cards:
 ```bash
+# markdown → flashcards
 python scripts/anki.py markdown notes.md -o cards.csv
-```
 
-supports headers, definition lists, q&a blocks, code blocks, and tables.
+# code → syntax cards
+python scripts/anki.py code example.py -t syntax -o code.csv
 
-### code snippet cards
-learn programming patterns and syntax:
-```bash
-python scripts/anki.py code example.py -t syntax function -o code_cards.csv
-```
-
-### mnemonic sequences
-memorize ordered lists with before/after cards:
-```bash
-echo -e "mercury\nvenus\nearth\nmars" | python scripts/anki.py mnemonic -- -t sequence -c planet
-```
-
-### cloze deletions
-create fill-in-the-blank cards:
-```bash
+# text → cloze deletions
 python scripts/anki.py cloze text.txt --type sentence -o cloze.csv
+
+# poetry memorization
+python scripts/anki.py poetry poem.txt -o poem.csv
+
+# list memorization
+echo -e "item1\nitem2\nitem3" | python scripts/anki.py list
 ```
 
-### structured facts
-convert detailed facts into multiple card types:
+## advanced usage
+
 ```bash
-cat facts.txt | python scripts/anki.py fact -- -t basic list example -o fact_cards.csv
+# batch processing
+python scripts/batch_processor.py notes/ -p "*.md" -c markdown -o cards/
+
+# preview cards
+python scripts/preview_cards.py cards.csv --interactive
+
+# smart parsing
+python scripts/smart_parser.py notes.txt --analyze
+
+# deck building
+python scripts/deck_builder.py *.csv -o deck.csv --remove-duplicates
 ```
 
-### batch processing
-process multiple files or entire directories at once:
-```bash
-python scripts/batch_processor.py notes/*.md -t markdown -o output/
-python scripts/batch_processor.py code/ -t code --recursive --merge
-```
-
-### preview cards
-preview generated cards before importing to anki:
-```bash
-python scripts/preview_cards.py cards.csv              # text preview
-python scripts/preview_cards.py cards.csv -f html > preview.html
-python scripts/preview_cards.py cards.csv --interactive  # browse cards
-```
-
-### smart content parsing
-automatically detect and convert various content types:
-```bash
-python scripts/smart_parser.py notes.txt --analyze  # preview what will be generated
-python scripts/smart_parser.py notes.txt -o smart_cards.csv
-```
-
-### vocabulary learning
-comprehensive vocabulary cards with multiple learning angles:
-```bash
-python scripts/anki.py vocabulary words.txt --all-types -o vocab.csv
-python scripts/anki.py vocabulary words.txt --etymology --synonyms
-```
-
-### poetry memorization
-create progressive cards for memorizing poems and verse:
-```bash
-echo -e "roses are red\nviolets are blue" | python scripts/anki.py poetry
-python scripts/anki.py poetry poem.txt --progressive --preserve-rhymes -o poem_cards.csv
-```
-
-### progressive reveal
-memorize passages by progressively revealing or hiding text:
-```bash
-echo "to be or not to be" | python scripts/anki.py reveal -o shakespeare.csv
-python scripts/anki.py reveal speech.txt --unit line --reverse -o speech_cards.csv
-```
-
-### synonym web
-create interconnected vocabulary cards with word relationships:
-```bash
-echo "happy sad big small" | python scripts/anki.py synonym --no-wordnet
-python scripts/anki.py synonym words.txt --depth 2 --types synonym antonym context -o vocab_web.csv
-```
-
-### context window cards
-learn text with varying amounts of surrounding context:
-```bash
-echo 'The "Renaissance" was a cultural movement.' | python scripts/anki.py context --window-sizes "full,5,2,0"
-python scripts/anki.py context article.txt --focus "important term" --include-hints -o context_cards.csv
-```
-
-### formula breakdown
-master complex formulas by learning their components:
-```bash
-echo "E = mc^2 | E:energy, m:mass, c:speed of light" | python scripts/anki.py formula -- --progressive
-python scripts/anki.py formula physics_formulas.txt --include-units --reverse -o formula_cards.csv
-```
-
-### timeline cards
-learn chronological information with various card types:
-```bash
-echo -e "1492 | Columbus discovers America\n1776 | American Declaration" | python scripts/anki.py timeline
-python scripts/anki.py timeline history.txt --relative --sequence --gaps -o timeline_cards.csv
-```
-
-### incremental reading
-break long texts into manageable chunks for progressive learning:
-```bash
-python scripts/anki.py incremental article.txt -o cards.csv
-python scripts/anki.py incremental book.txt --chunk-size 200 --overlap 50
-python scripts/anki.py incremental complex.txt --difficulty-progression --chunk-type sentences
-```
-
-### deck building
-combine and organize cards from multiple sources:
-```bash
-python scripts/deck_builder.py vocab.csv formulas.csv examples.csv -o study_deck.csv --name "Physics 101" --remove-duplicates
-```
-
-## script details
-
-### shared utilities (`anki_utils.py`)
-core formatting and parsing functions used by all scripts:
-- html escaping for anki
-- latex math notation support
-- csv writing utilities
-- text parsing helpers
-
-### individual generators
-
-each generator can be used standalone or through the unified cli:
-
-- **csv_formatter.py**: clean and format existing csv files
-- **cloze_generator.py**: create various cloze deletion patterns
-- **markdown_to_anki.py**: intelligent markdown parsing
-- **code_to_anki.py**: programming-focused cards
-- **image_occlusion.py**: visual learning with svg overlays
-- **fact_to_cards.py**: multi-perspective fact cards
-- **mnemonic_generator.py**: memory palace and association techniques
-- **vocabulary_cards.py**: comprehensive vocabulary learning with etymology and context
-- **poetry_memorization.py**: progressive cloze deletion for memorizing poetry and verse
-- **list_memorization.py**: comprehensive cards for memorizing ordered sequences
-- **overlapping_cloze.py**: multiple overlapping cloze deletions for thorough learning
-- **progressive_reveal.py**: progressively reveal or hide text for passage memorization
-- **synonym_web.py**: interconnected vocabulary cards with word relationships
-- **context_window.py**: generate cards with varying context for deep comprehension
-- **formula_breakdown.py**: break down formulas into component-based learning cards
-- **timeline_cards.py**: chronological learning cards for dates, events, and sequences
-- **incremental_reading.py**: break long texts into incremental learning chunks with context
-- **batch_processor.py**: bulk processing of multiple files
-- **preview_cards.py**: preview and browse cards before import
-- **smart_parser.py**: auto-detect content types and generate appropriate cards
-- **deck_builder.py**: combine, organize, and optimize card decks
+see [COOKBOOK.md](COOKBOOK.md) for more examples and recipes.
 
 ## testing
 
-run the test suites:
 ```bash
-python scripts/test_anki_utils.py          # unit tests
-python scripts/test_cli_integration.py     # cli integration tests  
-python scripts/test_batch_preview.py       # batch & preview tests
-python scripts/test_io_utils.py            # io utilities tests
-python scripts/test_context_window.py      # context window tests
-python scripts/test_formula_breakdown.py   # formula breakdown tests
-python scripts/test_synonym_web.py         # synonym web tests
-python scripts/test_list_memorization.py   # list memorization tests
-python scripts/test_timeline_cards.py      # timeline cards tests
-python scripts/test_incremental_reading.py # incremental reading tests
+make test       # run all tests
+make test-fast  # run core tests only
 ```
 
 ## tips for quality cards
 
-- keep cards atomic - one concept per card
-- use cloze deletions for lists and sequences
-- add context to prevent ambiguity
-- use images when visual memory helps
-- create reverse cards for important definitions
-- test your cards before bulk creating
-
-## cookbook
-
-check out `COOKBOOK.md` for detailed recipes and workflows for common use cases.
+1. keep cards atomic - one concept per card
+2. use cloze deletions for lists and sequences
+3. add context to prevent ambiguity
+4. preview cards before bulk import
+5. combine tools for better results
 
 ## installation
 
-you can install the package using pip:
+```bash
+make install  # installs package in development mode
+```
+
+or manually:
 ```bash
 pip install -e .
 ```
-
-this will make the `anki` command available system-wide.
 
 ## development
 
