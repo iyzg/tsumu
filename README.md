@@ -222,6 +222,51 @@ pip install -e .
 
 this will make the `anki` command available system-wide.
 
+## development
+
+### project structure
+
+```
+tsumu/
+├── scripts/              # main package directory
+│   ├── __init__.py      # package initialization
+│   ├── anki.py          # unified CLI entry point
+│   ├── anki_utils.py    # comprehensive utility library
+│   ├── io_utils.py      # backward compatibility wrapper
+│   └── [generators]/    # individual card generators
+├── pyproject.toml       # package configuration
+├── README.md            # this file
+└── COOKBOOK.md          # usage recipes
+```
+
+### for contributors
+
+when creating new card generators:
+
+1. import utilities from `anki_utils`:
+```python
+from anki_utils import (
+    InputHandler, OutputHandler, ArgumentParser,
+    AnkiFormatter, check_input_not_empty
+)
+```
+
+2. use standardized patterns:
+```python
+def main():
+    parser = ArgumentParser.create_basic_parser("your description")
+    # add your specific arguments
+    args = parser.parse_args()
+
+    text = InputHandler.get_input(args.input)
+    check_input_not_empty(text)
+
+    cards = generate_cards(text)
+    OutputHandler.write_cards(cards, args.output)
+```
+
+3. register your generator in `scripts/anki.py`
+
 ---
 
 *making memorization delightful, one card at a time*

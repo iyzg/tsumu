@@ -26,6 +26,8 @@ from anki_utils import (
     format_card,
     create_argument_parser,
     add_common_arguments,
+    check_input_not_empty,
+    validate_args,
 )
 
 # Re-export for backward compatibility
@@ -43,4 +45,6 @@ __all__ = [
     'format_card',
     'create_argument_parser',
     'add_common_arguments',
+    'check_input_not_empty',
+    'validate_args',
 ]

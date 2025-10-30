@@ -9,6 +9,7 @@ __version__ = "0.1.0"
 __author__ = "Tsumu Contributors"
 
 from .anki_utils import (
+    # Core utility classes
     AnkiFormatter,
     InputHandler,
     OutputHandler,
@@ -16,6 +17,10 @@ from .anki_utils import (
     ClozeGenerator,
     CardFormatter,
     ArgumentParser,
+
+    # Validation utilities
+    check_input_not_empty,
+    validate_args,
 )
 
 __all__ = [
@@ -26,4 +31,6 @@ __all__ = [
     'ClozeGenerator',
     'CardFormatter',
     'ArgumentParser',
+    'check_input_not_empty',
+    'validate_args',
 ]

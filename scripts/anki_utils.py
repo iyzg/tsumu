@@ -382,13 +382,13 @@ create_argument_parser = ArgumentParser.create_basic_parser
 
 # Convenience functions
 def read_input(input_file: Optional[str] = None) -> str:
-    """Read input from file or stdin."""
+    """Read input from file or stdin (legacy function)."""
     return InputHandler.get_input(input_file)
 
 
 def write_output(cards: List[Tuple], output_file: Optional[str] = None,
                 delimiter: str = '\t') -> None:
-    """Write cards to output."""
+    """Write cards to output (legacy function)."""
     OutputHandler.write_cards(cards, output_file, delimiter, verbose=False)
 
 
@@ -401,3 +401,32 @@ def add_common_arguments(parser: argparse.ArgumentParser) -> None:
     """Add common arguments to a parser (legacy function)."""
     parser.add_argument('--separator', default='---',
                        help='Card separator (default: ---)')
+
+
+def check_input_not_empty(text: str, context: str = "input") -> None:
+    """Validate that input text is not empty.
+
+    Args:
+        text: Input text to validate
+        context: Description of input for error message
+
+    Raises:
+        ValueError: If text is empty or only whitespace
+    """
+    if not text or not text.strip():
+        raise ValueError(f"Error: no {context} provided")
+
+
+def validate_args(args: Any, required_attrs: List[str]) -> None:
+    """Validate that required argument attributes are present.
+
+    Args:
+        args: Parsed arguments object
+        required_attrs: List of required attribute names
+
+    Raises:
+        ValueError: If any required attribute is missing or None
+    """
+    for attr in required_attrs:
+        if not hasattr(args, attr) or getattr(args, attr) is None:
+            raise ValueError(f"Error: required argument '{attr}' is missing")
