@@ -117,36 +117,36 @@ python scripts/anki.py synonym words.txt --depth 2 --types synonym antonym conte
 ### context window cards
 learn text with varying amounts of surrounding context:
 ```bash
-echo 'The "Renaissance" was a cultural movement.' | python scripts/context_window.py --window-sizes "full,5,2,0"
-python scripts/context_window.py article.txt --focus "important term" --include-hints -o context_cards.csv
+echo 'The "Renaissance" was a cultural movement.' | python scripts/anki.py context --window-sizes "full,5,2,0"
+python scripts/anki.py context article.txt --focus "important term" --include-hints -o context_cards.csv
 ```
 
 ### formula breakdown
 master complex formulas by learning their components:
 ```bash
-echo "E = mc^2 | E:energy, m:mass, c:speed of light" | python scripts/formula_breakdown.py --progressive
-python scripts/formula_breakdown.py physics_formulas.txt --include-units --reverse -o formula_cards.csv
+echo "E = mc^2 | E:energy, m:mass, c:speed of light" | python scripts/anki.py formula -- --progressive
+python scripts/anki.py formula physics_formulas.txt --include-units --reverse -o formula_cards.csv
 ```
 
 ### timeline cards
 learn chronological information with various card types:
 ```bash
-echo -e "1492 | Columbus discovers America\n1776 | American Declaration" | python scripts/timeline_cards.py
-python scripts/timeline_cards.py history.txt --relative --sequence --gaps -o timeline_cards.csv
+echo -e "1492 | Columbus discovers America\n1776 | American Declaration" | python scripts/anki.py timeline
+python scripts/anki.py timeline history.txt --relative --sequence --gaps -o timeline_cards.csv
 ```
 
 ### incremental reading
 break long texts into manageable chunks for progressive learning:
 ```bash
-python scripts/incremental_reading.py article.txt -o cards.csv
-python scripts/incremental_reading.py book.txt --chunk-size 200 --overlap 50
-python scripts/incremental_reading.py complex.txt --difficulty-progression --chunk-type sentences
+python scripts/anki.py incremental article.txt -o cards.csv
+python scripts/anki.py incremental book.txt --chunk-size 200 --overlap 50
+python scripts/anki.py incremental complex.txt --difficulty-progression --chunk-type sentences
+```
 
 ### deck building
 combine and organize cards from multiple sources:
 ```bash
-python scripts/deck_builder.py vocab.csv formulas.csv examples.csv \
-    -o study_deck.csv --name "Physics 101" --remove-duplicates
+python scripts/deck_builder.py vocab.csv formulas.csv examples.csv -o study_deck.csv --name "Physics 101" --remove-duplicates
 ```
 
 ## script details
@@ -183,7 +183,6 @@ each generator can be used standalone or through the unified cli:
 - **preview_cards.py**: preview and browse cards before import
 - **smart_parser.py**: auto-detect content types and generate appropriate cards
 - **deck_builder.py**: combine, organize, and optimize card decks
-- **cli_utils.py**: shared cli utilities and helpers
 
 ## testing
 
@@ -214,16 +213,14 @@ python scripts/test_incremental_reading.py # incremental reading tests
 
 check out `COOKBOOK.md` for detailed recipes and workflows for common use cases.
 
-## examples directory
+## installation
 
-check `.examples/` for sample input files and generated output.
+you can install the package using pip:
+```bash
+pip install -e .
+```
 
-## resources
-
-see `.resources/` for:
-- anki import documentation
-- card writing guidelines
-- spaced repetition best practices
+this will make the `anki` command available system-wide.
 
 ---
 

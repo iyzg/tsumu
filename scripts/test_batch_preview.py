@@ -18,7 +18,6 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from batch_processor import BatchProcessor
 from preview_cards import CardPreview, load_cards
-from cli_utils import CLIBase, ProgressTracker, create_safe_filename
 
 
 class TestBatchProcessor(unittest.TestCase):
@@ -164,52 +163,6 @@ class TestCardPreview(unittest.TestCase):
         self.assertIn('**Front:**', markdown)
 
 
-class TestCLIUtils(unittest.TestCase):
-    """Test CLI utility functions."""
-    
-    def test_create_safe_filename(self):
-        """Test safe filename creation."""
-        # Test unsafe characters removal
-        unsafe = 'file/with\\unsafe:chars*.txt'
-        safe = create_safe_filename(unsafe)
-        self.assertNotIn('/', safe)
-        self.assertNotIn('\\', safe)
-        self.assertNotIn(':', safe)
-        self.assertNotIn('*', safe)
-        
-        # Test length limiting
-        long_name = 'a' * 100
-        safe = create_safe_filename(long_name, max_length=50)
-        self.assertEqual(len(safe), 50)
-        
-        # Test empty string
-        safe = create_safe_filename('')
-        self.assertEqual(safe, 'output')
-    
-    def test_progress_tracker(self):
-        """Test progress tracking."""
-        tracker = ProgressTracker(10, "Testing")
-        tracker.start()
-        
-        for _ in range(10):
-            tracker.update(1)
-        
-        self.assertEqual(tracker.current, 10)
-        self.assertEqual(tracker.total, 10)
-    
-    def test_cli_base(self):
-        """Test CLI base class."""
-        cli = CLIBase("Test CLI", "Test epilog")
-        
-        # Test argument setup
-        self.assertIsNotNone(cli.parser)
-        
-        # Test custom argument addition
-        cli.add_argument('--test', help='Test argument')
-        args = cli.parse_args(['--test', 'value'])
-        self.assertEqual(args.test, 'value')
-
-
 class TestIntegration(unittest.TestCase):
     """Integration tests for the complete workflow."""
     
@@ -266,7 +219,6 @@ def run_tests():
     # Add test cases
     suite.addTests(loader.loadTestsFromTestCase(TestBatchProcessor))
     suite.addTests(loader.loadTestsFromTestCase(TestCardPreview))
-    suite.addTests(loader.loadTestsFromTestCase(TestCLIUtils))
     suite.addTests(loader.loadTestsFromTestCase(TestIntegration))
     
     # Run tests
